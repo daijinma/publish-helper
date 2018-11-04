@@ -1,9 +1,25 @@
 var glob = require('glob')
 var main = require('./src/main.js')
 var path = require('path');
+var fs = require('fs');
 var utils = require('./src/utils');
 
 global.npm_name = 'publisher';
+
+var yinyuoption = fs.readFileSync(process.cwd()+"/.inyusettings", 'utf-8').toString();
+
+if(yinyuoption){
+    try {
+        yinyuoption = JSON.parse(yinyuoption);
+        if(!yinyuoption.url){
+            throw new Error(".inyusettings 配置错误！")
+        }
+      } catch(err) {
+        console.error(err)
+      }
+    
+}
+
 
 /**
  * 主业务入口
@@ -19,6 +35,7 @@ function controller(options){
     
     this.options.hostname = options.hostname;
     this.options.uploadUrl = options.uploadUrl;
+    this.options.yinyu = yinyuoption;
 
     if(!this.options.src){
         throw new Error("html src (string) is required");
@@ -64,7 +81,6 @@ controller.prototype.init = function(){
         this.files = files;
         if(err || this.files.length==0){
             throw new Error("glob can't find html in option.src");
-            return
         }else{
             this.htmlpath = path.dirname(files[0])
 

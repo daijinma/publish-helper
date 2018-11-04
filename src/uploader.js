@@ -9,6 +9,7 @@
 var fileUpload 	= require('node-formdata');
 var path = require('path');
 var fs = require('fs');
+var request = require('request');
 var utils = require('./utils');
 
 var defaultOptions = {
@@ -17,13 +18,45 @@ var defaultOptions = {
     file: ""
 };
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+
+var token = '';
+
+
 module.exports = function(){
 	let starttime = new Date().getTime();
 	let self = this;
     console.log(`[${global.npm_name}]:上传文件 - start`)
 	
     return new Promise((resolve, reject)=>{
-        selector.call(self,  resolve)
+		if(this.options.yinyu && this.options.yinyu.url){
+			request( {
+				"url": this.options.yinyu.url,
+				"method": "GET",
+				"json": true,
+				headers: this.options.yinyu.headers
+			} , function(error, response, body) {
+				if (!error && response.statusCode == 200) {
+					if(body && body.data && body.data.upload_token){
+						token = body.data.upload_token;
+						resolve();
+					}else{
+						throw new Error("./inyusettings 配置文件中获取upload_token失败！");
+					}
+					
+				}
+			});
+
+			
+		}else{
+			resolve();
+		}
+        
+	}).then(()=>{
+		return new Promise((resolve, reject)=>{
+			selector.call(self,  resolve)
+		})
 	})
 	.then(()=>{
 		
@@ -356,15 +389,88 @@ function clearHTML(){
  * @param {*} cb ：上传回调
  */
 function upload(url, key, self, cb){
-    // defaultOptions.file =  url;
-    defaultOptions.url =  self.options.uploadUrl;
 	let start = new Date().getTime();
+	let yinyu = self.options.yinyu;
 	if(!fs.existsSync(url)){
 		console.log('gulp-upload uploading','fail!',url)
 		return cb('gulp-upload uploading','fail! '+url);
 	}
-    fileUpload(defaultOptions,'http')
-	.then(function(res) {
+
+	let fileUploadPromise = null;
+
+	if(yinyu && yinyu.url){	
+		  
+		fileUploadPromise = new Promise((resolve, reject)=>{
+
+			var file = '';
+
+			if(fs.existsSync(url)){
+				file= fs.readFileSync(url);
+
+			}else{
+
+				resolve(JSON.stringify({
+					errno:1,
+					data:''
+				}));
+			}
+
+			if(file){
+				const options = {
+					method: "POST",
+					url: yinyu.uploadUrl,
+					headers: {
+						"Content-Type": "multipart/form-data"
+					},
+					formData : {
+						"token" : token,
+						"key" : "static/"+ new Date().getTime()+parseInt(Math.random()*10000) + path.extname(url),
+						"file" : fs.readFileSync(url)
+					}
+				};
+				
+				request(options, function (error, response, body) {
+	
+					if (!error && response.statusCode == 200) {
+						if(body){
+							body = JSON.parse(body);
+							resolve(JSON.stringify({
+								errno:0,
+								data:{
+									fileName: body.key
+								}
+							}));
+						}else{
+							console.log('upload uploading','fail!',url)
+						}
+						
+					}else{
+						console.log('----------------------1111111111')
+						resolve(JSON.stringify({
+							errno:1,
+							data:''
+						}));
+					}
+				});
+			}else{
+				console.log('----------------------222222')
+				resolve(JSON.stringify({
+					errno:1,
+					data:''
+				}));
+			}
+			
+		})
+			
+	
+	}else{
+		defaultOptions.url =  self.options.uploadUrl;
+		fileUploadPromise = fileUpload(defaultOptions,'http');
+	}
+
+
+    
+	fileUploadPromise.then(function(res) {
 		let end = new Date().getTime();
 		res = JSON.parse(res);
 	    if(res.errno==0){
@@ -380,7 +486,7 @@ function upload(url, key, self, cb){
 				myhost = self.options.hostname("static", res.data);
 			}
 	    	var _url = myhost+'/'+res.data.fileName;
-			res.url = '//'+_url;
+			res.url = _url;
 			res['key'] = key;
 			console.log(`[${global.npm_name}]:上传文件 ${_url} - (${end-start}ms)`)
 			return cb(null, res);
@@ -390,7 +496,7 @@ function upload(url, key, self, cb){
 		}
 	    
 	})
-	.fail(function(res){
+	.catch(function(res){
 	    cb(res);
 	})
 }

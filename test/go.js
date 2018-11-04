@@ -1,6 +1,8 @@
 
 var publisher = require('../index.js')
 var path = require('path');
+var fs = require('fs');
+var stripJsonComments = require('strip-json-comments');
 
 // new publisher({
 //     src:path.resolve(__dirname, '../../../2018/pc.xingxiu/dist/*.html'),
@@ -23,20 +25,16 @@ var path = require('path');
 // });
 
 
+  
+
 
 new publisher({
-    src:path.resolve(__dirname, 'path/src/*.html'),
-    dist: path.resolve(__dirname, 'path/build'),
+    src:path.resolve(__dirname, './demo1/*.html'),
+    dist: path.resolve(__dirname, './demo1/build'),
     iwantcdn:false,
     uploadUrl: "XXXX",// 上传文件 ajax 路径，必填
     hostname:function(type, data){
-        let num = (data.hash).replace(/[^0-9]/ig,"");
-        num = num%5;
-        if(type="img"){
-            return 'xxi'+num+".cdn.test.com";
-        }else{
-            return 'xxs' + num +".cdn.test.com";
-        }
+        return 'http://cdn.inyuapp.com/';
     },
     sourceMappingURL:false,
     chunk: false,
