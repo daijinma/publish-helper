@@ -91,8 +91,19 @@ function selector(done){
 		if(self.mapfile.static.length==0){
 			return resolve();
 		}
+		var tempArr = [];
+		
+		tempArr = self.mapfile.static.sort(function(a,b){
+			if(a.length  < b.length){
+				return 1;
+			}else{
+				return -1;
+			}
+		})
 
-		self.mapfile.static.forEach((item, index)=>{
+		console.log(tempArr)
+
+		tempArr.forEach((item, index)=>{
 			let tempUrl = self.mapfile._[item].url;
 			upload(tempUrl, item, self, (err, data)=>{
 				self.mapfile.staticCount--;
