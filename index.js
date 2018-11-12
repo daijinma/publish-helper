@@ -6,7 +6,7 @@ var utils = require('./src/utils');
 
 global.npm_name = 'publisher';
 
-var yinyuoption = fs.readFileSync(process.cwd()+"/.inyusettings", 'utf-8').toString();
+var yinyuoption = null// fs.readFileSync(process.cwd()+"/.inyusettings", 'utf-8').toString();
 
 if(yinyuoption){
     try {

@@ -32,9 +32,9 @@ new publisher({
     src:path.resolve(__dirname, '../../active-maker/dist/*.html'),
     dist: path.resolve(__dirname, '../../active-maker/output'),
     iwantcdn:false,
-    uploadUrl: "XXXX",// 上传文件 ajax 路径，必填
+    uploadUrl: "https://static.admin.inyuapp.com/upload",// 上传文件 ajax 路径，必填
     hostname:function(type, data){
-        return 'http://cdn.inyuapp.com';
+        return 'http://image.inyuapp.com';
     },
     sourceMappingURL:false,
     chunk: false,

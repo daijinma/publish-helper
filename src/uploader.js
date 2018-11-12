@@ -101,8 +101,6 @@ function selector(done){
 			}
 		})
 
-		console.log(tempArr)
-
 		tempArr.forEach((item, index)=>{
 			let tempUrl = self.mapfile._[item].url;
 			upload(tempUrl, item, self, (err, data)=>{
@@ -409,81 +407,78 @@ function upload(url, key, self, cb){
 
 	let fileUploadPromise = null;
 
-	if(yinyu && yinyu.url){	
 		  
-		fileUploadPromise = new Promise((resolve, reject)=>{
+	fileUploadPromise = new Promise((resolve, reject)=>{
 
-			var file = '';
+		var file = '';
 
-			if(fs.existsSync(url)){
-				file= fs.readFileSync(url);
+		if(fs.existsSync(url)){
+			file= fs.readFileSync(url);
 
-			}else{
+		}else{
 
-				resolve(JSON.stringify({
-					errno:1,
-					data:''
-				}));
+			resolve(JSON.stringify({
+				errno:1,
+				data:''
+			}));
+		}
+
+		if(file){
+
+			const options={
+				method: "POST",
+				// headers: {
+				// 	"Content-Type": "multipart/form-data"
+				// }
 			}
+			const formData = {
+				"file" : fs.createReadStream(url)
+			}
+			
+			if(yinyu && yinyu.url){	
+				options.url = yinyu.uploadUrl
+				formData.key = "static/"+ new Date().getTime()+parseInt(Math.random()*10000) + path.extname(url);
+				formData.token=token
+			}else{
+				options.url = self.options.uploadUrl;
+			}
+			options.formData =formData;
+			
+			request(options, function (error, response, body) {
 
-			if(file){
-				const options = {
-					method: "POST",
-					url: yinyu.uploadUrl,
-					headers: {
-						"Content-Type": "multipart/form-data"
-					},
-					formData : {
-						"token" : token,
-						"key" : "static/"+ new Date().getTime()+parseInt(Math.random()*10000) + path.extname(url),
-						"file" : fs.readFileSync(url)
-					}
-				};
-				
-				request(options, function (error, response, body) {
-	
-					if (!error && response.statusCode == 200) {
-						if(body){
-							body = JSON.parse(body);
-							resolve(JSON.stringify({
-								errno:0,
-								data:{
-									fileName: body.key
-								}
-							}));
-						}else{
-							console.log('upload uploading','fail!',url)
-						}
-						
+				if (!error && response.statusCode == 200) {
+					if(body){
+						body = JSON.parse(body);
+						resolve(body);
 					}else{
-						console.log('----------------------1111111111')
-						resolve(JSON.stringify({
-							errno:1,
-							data:''
-						}));
+						console.log('upload uploading','fail!',url)
 					}
-				});
-			}else{
-				console.log('----------------------222222')
-				resolve(JSON.stringify({
-					errno:1,
-					data:''
-				}));
-			}
-			
-		})
-			
-	
-	}else{
-		defaultOptions.url =  self.options.uploadUrl;
-		fileUploadPromise = fileUpload(defaultOptions,'http');
-	}
-
+					
+				}else{
+					console.log('----------------------1111111111')
+					resolve(JSON.stringify({
+						errno:1,
+						data:''
+					}));
+				}
+			});
+		}else{
+			console.log('----------------------222222')
+			resolve(JSON.stringify({
+				errno:1,
+				data:''
+			}));
+		}
+		
+	})
 
     
 	fileUploadPromise.then(function(res) {
 		let end = new Date().getTime();
-		res = JSON.parse(res);
+		try{
+			res = JSON.parse(res);
+		}catch(e){}
+		
 	    if(res.errno==0){
 			var myhost = '';
 			var isImage = /\.(jpg|jpge|gif|png|webp)/i.test(key);
@@ -502,7 +497,7 @@ function upload(url, key, self, cb){
 			console.log(`[${global.npm_name}]:上传文件 ${_url} - (${end-start}ms)`)
 			return cb(null, res);
 		}else{
-			console.log('upload uploading','fail!',url)
+			console.log('upload uploading','fail!',url +res.errmsg)
 			return cb('upload uploading','fail! '+url);
 		}
 	    
