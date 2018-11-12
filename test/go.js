@@ -28,13 +28,41 @@ var stripJsonComments = require('strip-json-comments');
   
 
 
+// new publisher({
+//     src:path.resolve(__dirname, '../../active-maker/dist/*.html'),
+//     dist: path.resolve(__dirname, '../../active-maker/output'),
+//     iwantcdn:false,
+//     uploadUrl: "https://static.admin.inyuapp.com/upload",// 上传文件 ajax 路径，必填
+//     hostname:function(type, data){
+//         return 'http://image.inyuapp.com';
+//     },
+//     sourceMappingURL:false,
+//     chunk: false,
+//     chunkFilename: '/js/[name].chunk.js',
+//     onScand: function(map, next){
+//         console.log('onScand');
+//         next();
+//     },
+//     onMoved: function(map, next){
+//         console.log('onMoved')
+//         next();
+//     },
+//     onDone: function(map){
+//         console.log('onDone')
+//     },
+// });
+
 new publisher({
-    src:path.resolve(__dirname, '../../active-maker/dist/*.html'),
-    dist: path.resolve(__dirname, '../../active-maker/output'),
+    src:path.resolve(__dirname, '../../task-admin/output/*.html'),
+    dist: path.resolve(__dirname, '../../task-admin/aaa'),
     iwantcdn:false,
     uploadUrl: "https://static.admin.inyuapp.com/upload",// 上传文件 ajax 路径，必填
     hostname:function(type, data){
-        return 'http://image.inyuapp.com';
+        if (type == "img") {
+            return "//image.inyuapp.com";
+          } else {
+            return "//static.inyuapp.com";
+          }
     },
     sourceMappingURL:false,
     chunk: false,
