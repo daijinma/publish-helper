@@ -455,7 +455,7 @@ function upload(url, key, self, cb){
 					}
 					
 				}else{
-					console.log('----------------------1111111111')
+					console.log('----------- upload fail -----------')
 					resolve(JSON.stringify({
 						errno:1,
 						data:''
@@ -463,7 +463,7 @@ function upload(url, key, self, cb){
 				}
 			});
 		}else{
-			console.log('----------------------222222')
+			console.log('----------- upload fail -----------')
 			resolve(JSON.stringify({
 				errno:1,
 				data:''
@@ -481,7 +481,7 @@ function upload(url, key, self, cb){
 		
 	    if(res.errno==0){
 			var myhost = '';
-			var isImage = /\.(jpg|jpge|gif|png|webp)/i.test(key);
+			var isImage = /\.(jpg|jpge|gif|png|webp|ico|icon|jpeg)/i.test(key);
 			var isSwf = /\.(swf)/i.test(key);
 
 			if(isImage){
