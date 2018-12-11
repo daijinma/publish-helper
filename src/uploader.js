@@ -497,7 +497,7 @@ function upload(url, key, self, cb){
 			console.log(`[${global.npm_name}]:上传文件 ${_url} - (${end-start}ms)`)
 			return cb(null, res);
 		}else{
-			console.log('upload uploading','fail!  -> ',url )
+			console.log('upload uploading','fail!  -> ',url, res)
 			return cb('upload uploading','fail! '+url);
 		}
 	    
