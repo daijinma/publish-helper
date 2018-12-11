@@ -484,20 +484,20 @@ function upload(url, key, self, cb){
 			var isImage = /\.(jpg|jpge|gif|png|webp|ico|icon|jpeg)/i.test(key);
 			var isSwf = /\.(swf)/i.test(key);
 
-			if(isImage){
-				myhost = self.options.hostname("img", res.data);
-			}else if(isSwf){
-				myhost = self.options.hostname("static", res.data);
-			}else{
-				myhost = self.options.hostname("static", res.data);
-			}
-	    	var _url = myhost+'/'+res.data.fileName;
+			// if(isImage){
+			// 	myhost = self.options.hostname("img", res.data);
+			// }else if(isSwf){
+			// 	myhost = self.options.hostname("static", res.data);
+			// }else{
+			// 	myhost = self.options.hostname("static", res.data);
+			// }
+	    	var _url = res.data.url;
 			res.url = _url;
 			res['key'] = key;
 			console.log(`[${global.npm_name}]:上传文件 ${_url} - (${end-start}ms)`)
 			return cb(null, res);
 		}else{
-			console.log('upload uploading','fail!',url +res.errmsg)
+			console.log('upload uploading','fail!  -> ',url )
 			return cb('upload uploading','fail! '+url);
 		}
 	    
