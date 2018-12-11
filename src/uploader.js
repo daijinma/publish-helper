@@ -418,7 +418,7 @@ function upload(url, key, self, cb){
 		}else{
 
 			resolve(JSON.stringify({
-				errno:1,
+				error_code:1,
 				data:''
 			}));
 		}
@@ -457,7 +457,7 @@ function upload(url, key, self, cb){
 				}else{
 					console.log('----------- upload fail -----------')
 					resolve(JSON.stringify({
-						errno:1,
+						error_code:1,
 						data:''
 					}));
 				}
@@ -465,7 +465,7 @@ function upload(url, key, self, cb){
 		}else{
 			console.log('----------- upload fail -----------')
 			resolve(JSON.stringify({
-				errno:1,
+				error_code:1,
 				data:''
 			}));
 		}
@@ -479,7 +479,7 @@ function upload(url, key, self, cb){
 			res = JSON.parse(res);
 		}catch(e){}
 		
-	    if(res.errno==0){
+	    if(res.error_code==0){
 			var myhost = '';
 			var isImage = /\.(jpg|jpge|gif|png|webp|ico|icon|jpeg)/i.test(key);
 			var isSwf = /\.(swf)/i.test(key);
