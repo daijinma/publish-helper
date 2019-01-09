@@ -552,11 +552,11 @@ function rewriteTempFile(key,  tempArr, callback){
 
 function rewriteChunk(item){
 	var tempUrl = item.url;
-	const regExp = /\.src[\s]?=.*\[(\w.*)\].*chunk\.js\"/gi;
+	const regExp = /\.src[\s]?=.*chunk\.js\"/gi;
 	let content = fs.readFileSync(tempUrl, 'utf8');
 	
 	fs.writeFileSync(tempUrl, content.replace(regExp, ($0, $1)=>{
-		return `.src=${JSON.stringify(this.chunkMap)}[${$1}]`
+		return `.src=${JSON.stringify(this.chunkMap)}[chunkId]`
 	}), 'utf8');
 
 }
