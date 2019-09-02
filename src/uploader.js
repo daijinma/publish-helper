@@ -573,6 +573,7 @@ function rewriteHTMLFile(key, callback){
 	let map = this.mapfile._;
 
 	if(doneArr && doneArr.length){
+		doneArr = doneArr.sort((a,b)=>{return b.length - a.length})
 		if(fs.existsSync(tempUrl) && !utils.isHttpUrl(tempUrl)){
 			let content = fs.readFileSync(tempUrl, 'utf8');
 			doneArr.forEach((item,index)=>{
