@@ -52,7 +52,7 @@ module.exports = function(key, file){
      * chunk 依赖上传
     */
     if(this.options.chunk){
-        let starLen = content.lastIndexOf("chunk.js");
+        let starLen = content.lastIndexOf(/chunk\.js[^\.map]/);
         if(starLen>0){
             shuldInjectChunk = true;
         }

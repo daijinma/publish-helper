@@ -53,10 +53,10 @@ var stripJsonComments = require('strip-json-comments');
 // });
 
 new publisher({
-    src:path.resolve(__dirname, '../../task-admin/output/*.html'),
-    dist: path.resolve(__dirname, '../../task-admin/aaa'),
+    src:path.resolve(__dirname, '../../order-admin/output/*.html'),
+    dist: path.resolve(__dirname, '../../order-admin/output'),
     iwantcdn:false,
-    uploadUrl: "https://static.admin.inyuapp.com/upload",// 上传文件 ajax 路径，必填
+    uploadUrl: "http://fe.inyuapp.com/upload/file",// 上传文件 ajax 路径，必填
     hostname:function(type, data){
         if (type == "img") {
             return "//image.inyuapp.com";
